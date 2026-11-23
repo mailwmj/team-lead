@@ -14,12 +14,13 @@ Later cards start from the earlier card's branch instead of waiting for its merg
 
 - Verifier and reviewer: a different model from the implementer, a fresh session, read-only, never shown the implementer's self-assessment or PASS.
 - The implementer's PASS is a hint. The verdict comes from evidence you can see: command output, file:line, artefact hash.
+- When a diff changes shared tooling, config, CI, hooks or lint rules, run the corresponding contract or plugin tests.
 - Research and code claims from careless models are checked by a fact-checker (file:line plus quoted text) before you use them.
 
 ## Blocking vs suggestion
 
-- Blocking: only issues on the project's DISPATCH blocking list, and only with a concrete trigger path (inputs or state that lead to the harm).
-- Everything else is a suggestion: record it in the card's delivery or a follow-up card; it does not hold the merge.
+- Blocking: only issues that hit the project's DISPATCH blocking list, violate the card's stated claim or scope, or break an existing test or contract, and only with a concrete trigger path (inputs, state or failing check).
+- Everything else, including out-of-scope edge variants (with reproduction), is a suggestion: re-grade over-scoped findings and record them in the card's delivery or a follow-up card; they do not hold the merge.
 - Review thinking level: high by default; the highest level only for files the project marks sensitive.
 
 ## Rounds
