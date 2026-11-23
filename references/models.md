@@ -1,0 +1,27 @@
+# Models and dispatch mechanics
+
+Cross-project observations; the date is when first seen, on the version current then. Names below are model families: use the newest id `list_models` shows for the family unless the project pins one. agy carries its thinking level in the model id suffix (`-high`, `-xhigh`). The project's DISPATCH routing table decides who gets what; this file informs that table and the card wording. Add a line here when a model surprises you; move a line out when it stops being true.
+
+## Temperament
+
+- **agy Gemini Hydrogen**: strongest at UI and copy; reliable on UI cards written down to function level (2026-11-14). Has turned "reuse" into "rewrite", copied styles, bypassed i18n and fabricated citations in reports (2026-11-08): name the view-model functions, components and hooks it must call, write "do not rewrite the sorting, grouping, mapping", cap upstream line changes, and have another model check its output. Its research is fact-checked before use. Different thinking from GPT and Claude: a good independent planner and copy adviser. When it returns errored, check the branch first; the commit may already be pushed (2026-11-16). Do not message it while it runs a long command.
+- **agy Gemini Neon**: newer than Hydrogen; reported elsewhere as the best communicator but careless with code claims (external article, 2026-11-23). First code review (a lint/test/script checks card, run in parallel with Terra on the same card): found 4 blocking issues to Terra's 1, all with commands and outputs, all three Terra missed independently reproduced, no fabrication; probed bypasses far more exhaustively (2026-11-23). Worth a second reviewer seat on check and tooling cards; one data point so far. Also the independent planner and copy adviser.
+- **GPT Sol** (via pi or Codex): finishes function-level logic cards in one round (high thinking is enough), writes failing tests first, commits in segments, maps its report to rule numbers (2026-11-16). Default read-only reviewer: blocking items with line numbers and consequences, reproduces issues in in-memory tests (Sol 6.2, 2026-11-08, 11-21).
+- **GPT Terra**: thorough reviewer and verifier; traces cross-card lifecycle bugs (2026-11-09); stops and reports when the card is wrong or the plan is constrained (2026-11-21). As implementer tends to hand back a slice: start the card with "do not end the turn before everything is committed and pushed", and split big cards into verifiable segments (2026-11-09). Reads boundary clauses strictly: say which scripts are normal to run and "on doubt, take the most reasonable path and note it" (2026-11-15). pi's Terra and Codex's Terra count as the same model for independence. On that same review it caught the alias bypass but missed a broken upstream test, a stale-baseline allowlist and a substring marker match (2026-11-23).
+- **DeepSeek flash** (pi): builds, device checks, diagnostics, tooling and long scripted runs; about 6x faster than a cloud GPT line on the same work, high thinking is enough; can also take read-only checks (2026-11-08, 11-09). Follows instructions literally: when you say "read-only", explicitly allow `git pull --ff-only`. Check its PASS against evidence at concrete paths (2026-11-11).
+- **Haiku**: fact-checker and code search; demand file:line and quoted text (2026-11-07).
+
+## Paseo dispatch
+
+- Check the model exists with `list_models <provider>` right before `create_agent`; ids get retired (2026-11-20). It lists this host only; on a remote host, a failed `create_agent` is the signal.
+- Label every agent `team-lead=<project>` at creation so a later lead can find them.
+- pi: pass only `settings.thinkingOptionId`, no `modeId`. agy: `settings.modeId: "full-access"` (its only mode). Codex: `full-access` unless the project says otherwise.
+- Switching model mid-card: the new session first reviews the uncommitted work, then continues.
+- Stalled pi run: send "continue from where you stopped", up to 3 times; 429 `account_concurrency_exceeded` is transient. 401 `auth_unavailable` ("IP is not authorized") is not: switch line at once (2026-11-23).
+- Remote host agents: answer their questions and permission requests with `send_agent_prompt` (`respond_to_permission` does not reach them); you cannot `update_agent` a remote agent's model, start a new one instead (2026-11-07, 11-20).
+- A `create_agent` to a remote host that times out may still have been created: `list_agents` by title before resending (2026-11-11).
+- Finish notifications go to the session that created the agent. After a coordinator handoff, message every running agent so it reports to the new lead (2026-11-08).
+- Activity only updates when a command finishes; a long silence is not a hang (2026-11-07). Wait for notifications; when one is lost, check status once.
+- Agents ask the user directly in the app for physical steps; send your message only when they are not mid-question (2026-11-08). A remote agent stuck on a question: prefer the user tapping in the app; to answer it yourself, interrupt it, wait for status error, then send the answer (2026-11-20).
+- Keep one lead session per project at a time (2026-11-08).
+- Codex `auto` mode makes `.git` read-only: fetch before dispatching a review in that mode (2026-11-08).
