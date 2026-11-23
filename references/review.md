@@ -5,7 +5,7 @@
 | Tier | For | Process |
 |---|---|---|
 | Full | architecture decisions, phase gates, anything shipped to users | implement → independent verification (fresh session, tests from the final artefact) + read-only code review → lead judges against raw evidence |
-| Light | well-scoped fixes, small features | implementer self-verifies with evidence from the final artefact; add review only where the project lists risky areas (lifecycle, focus, input, concurrency, security) |
+| Light | well-scoped fixes, small features | implementer self-verifies with evidence from the final artefact; add review only in the project's DISPATCH sensitive areas |
 | None | docs, scripts, config | no extra check |
 
 Later cards start from the earlier card's branch instead of waiting for its merge.
