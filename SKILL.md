@@ -19,7 +19,7 @@ A project may keep them elsewhere; its `AGENTS.md` points to them.
 1. Find the project's DISPATCH and lesson files: follow the pointer in `AGENTS.md` or the docs index; else `rg --files | rg -i 'dispatch|lesson'`. If there are none, run [init](references/init.md) and stop there until the user has confirmed it.
 2. Read both. They override any default in this skill.
 3. Read [models](references/models.md): cross-project model temperament and Paseo dispatch gotchas.
-4. `list_agents` on every host the project uses (pass `serverId` for remote hosts) and pick the running ones labelled `team-lead=<project>`, where `<project>` is the repository directory name; agents from before labelling are listed in the project's handoff notes, if any. Send each a message so their finish notifications reach you.
+4. `list_agents` on every host the project uses (pass `serverId` for remote hosts) and pick the running ones labelled `team-lead=<project>`, where `<project>` is the repository directory name in lowercase; agents from before labelling are listed in the project's handoff notes, if any. Send each a message so their finish notifications reach you.
 
 Done when you can name, for this project: who to ask before what, which model takes which kind of work, where builds run, what blocks a merge, and where decisions are logged.
 
