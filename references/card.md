@@ -13,7 +13,7 @@ A card is the whole contract: the agent sees only the card and the worktree. A c
 [Acceptance] A checklist; each item names its evidence (command output, file:line, screenshot, hash).
 [Guard the class] Required on fix cards: which check or structure stops this class of mistake; if none is possible, why.
 [Stop conditions] Stop and report after 3 different approaches fail on the same item; never change acceptance criteria or skip checks.
-[Delivery] Branch name and commit convention; conclusion-first last reply (first ~1200 chars: verdict, commit hashes, one-line-per-item blocking/suggestion list; detailed evidence and logs after).
+[Delivery] Branch name and commit convention; conclusion-first last reply (first word, verbatim: DONE, PARTIAL, NEEDS-INPUT or STUCK; first ~1200 chars: verdict, commit hashes, one-line-per-item blocking/suggestion list; detailed evidence and logs after).
 [Cleanup] Delete only the temp files and directories this session created.
 ```
 

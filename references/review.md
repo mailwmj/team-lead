@@ -14,6 +14,8 @@ Later cards start from the earlier card's branch instead of waiting for its merg
 
 - Verifier and reviewer: a different model from the implementer, a fresh session, read-only, never shown the implementer's self-assessment or PASS.
 - The implementer's PASS is a hint. The verdict comes from evidence you can see: command output, file:line, artefact hash.
+- A verdict holds for one commit. The review or verification card names the commit hash and the verdict repeats it; a reply without a verdict and that hash counts as no review. Before landing, the branch head must equal the judged hash, or every commit after it must be a fix you checked against the review items; otherwise review again.
+- The last reply's first word decides what it is: only `DONE` is a delivery to judge. `PARTIAL` goes back to the same session to finish; `NEEDS-INPUT` and `STUCK` get your answer or a revised card.
 - When a diff changes shared tooling, config, CI, hooks or lint rules, run the corresponding contract or plugin tests.
 - Research and code claims from careless models are checked by a fact-checker (file:line plus quoted text) before you use them.
 
@@ -25,7 +27,7 @@ Later cards start from the earlier card's branch instead of waiting for its merg
 
 ## Rounds
 
-You check fixes against the review items yourself. Blocking items get one re-review after fixing. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
+Send each blocking item back to the implementer as the reviewer wrote it (trigger path, file:line, failing output), not paraphrased. You check fixes against the review items yourself. Blocking items get one re-review after fixing. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
 
 ## Mistakes become checks
 

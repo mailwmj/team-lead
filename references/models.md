@@ -17,7 +17,7 @@ Cross-project observations; the date is when first seen, on the version current 
 - Check the model exists with `list_models <provider>` right before `create_agent`; ids get retired (2026-11-20). It lists this host only; on a remote host, a failed `create_agent` is the signal.
 - Label every agent `team-lead=<project>` at creation so a later lead can find them.
 - pi: pass only `settings.thinkingOptionId`, no `modeId`. agy: `settings.modeId: "full-access"` (its only mode). Codex: `full-access` unless the project says otherwise.
-- Switching model mid-card: the new session first reviews the uncommitted work, then continues.
+- Switching model mid-card: `archive_agent` the old session and confirm with `list_agents` it is gone before the new one starts in that worktree (one writer); the new session first reviews the uncommitted work, then continues.
 - Stalled pi run: send "continue from where you stopped", up to 3 times; 429 `account_concurrency_exceeded` is transient. 401 `auth_unavailable` ("IP is not authorized") is not: switch line at once (2026-11-23).
 - Remote host agents: answer their questions and permission requests with `send_agent_prompt` (`respond_to_permission` does not reach them); you cannot `update_agent` a remote agent's model, start a new one instead (2026-11-07, 11-20).
 - A `create_agent` to a remote host that times out may still have been created: `list_agents` by title before resending (2026-11-11).
