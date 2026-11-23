@@ -13,6 +13,7 @@ Cross-project observations; the date is when first seen, on the version current 
 
 ## Paseo dispatch
 
+- Highest thinking level means `xhigh` (agy: the `-xhigh` id); `max` and `ultra` delegate subtasks and lose control of scope, so use them only when the project says so.
 - Check the model exists with `list_models <provider>` right before `create_agent`; ids get retired (2026-11-20). It lists this host only; on a remote host, a failed `create_agent` is the signal.
 - Label every agent `team-lead=<project>` at creation so a later lead can find them.
 - pi: pass only `settings.thinkingOptionId`, no `modeId`. agy: `settings.modeId: "full-access"` (its only mode). Codex: `full-access` unless the project says otherwise.
