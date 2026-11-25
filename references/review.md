@@ -14,12 +14,12 @@ Which checks a card gets is set by its complexity ([planning § complexity](plan
 ## Blocking vs suggestion
 
 - Blocking: only issues that hit the project's DISPATCH blocking list, violate the card's stated claim or scope, or break an existing test or contract, and only with a concrete trigger path (inputs, state or failing check).
-- Everything else, including out-of-scope edge variants (with reproduction), is a suggestion: re-grade over-scoped findings and record them in the card's delivery or a follow-up card; they do not hold the merge.
+- Everything else, including out-of-scope edge variants (with reproduction), is a suggestion: re-grade over-scoped findings and record them in the tracker's carried suggestions; they do not hold the merge.
 - Review thinking level: high by default; the highest level only for files the project marks sensitive.
 
 ## Rounds
 
-An APPROVE lands. A fix round opens only for blocking items; suggestions go to the delivery notes or to a later card touching the same area. Review and verification of one commit feed one fix round: send the first blocking result at once and steer later ones into the same round.
+An APPROVE lands. A fix round opens only for blocking items; suggestions go to the tracker's carried suggestions ([docs § roles](docs.md#roles)) for a later card touching the same area. Review and verification of one commit feed one fix round: send the first blocking result at once and steer later ones into the same round.
 
 Send each blocking item back to the implementer as the reviewer wrote it (trigger path, file:line, failing output), not paraphrased. A fix to a blocking item, a rewrite, or any change to code a verifier already probed goes back to the original reviewer and verifier, in parallel; a small fix to a suggestion is checked against the review items by you or the assistant. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
 

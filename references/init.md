@@ -1,12 +1,12 @@
 # Init: set a project up for teamwork
 
-Goal: the project has a DISPATCH file and a lesson file the user has confirmed, and its `AGENTS.md` points to them and tells worker agents how cards work.
+Goal: the project has a DISPATCH file and a lesson file the user has confirmed, its docs fill the [doc roles](docs.md) (a new project from the user's brief, an existing one by mapping and filling gaps), and its `AGENTS.md` points to them and tells worker agents how cards work.
 
 **Ask, never guess.** Anything the project files and Paseo do not state (concurrency, privacy limits, which host is which machine, models on remote hosts) goes into the confirmation message as a question with your recommendation.
 
 ## Steps
 
-1. **Read the project.** Language and stack; build, test, lint and format commands (from `package.json`, Makefile, CI config, existing docs); existing checks and hooks; the docs commit convention; where docs live and in what language; where decisions are recorded. Done when you can state how a change is verified and committed here.
+1. **Read the project.** Language and stack; build, test, lint and format commands (from `package.json`, Makefile, CI config, existing docs); existing checks and hooks; the docs commit convention; where docs live and in what language; where decisions are recorded; which existing doc fills each [doc role](docs.md#roles). Done when you can state how a change is verified and committed here.
 2. **Read the fleet.** Paseo `list_hosts`, `list_providers`, `list_models` per provider, `list_profiles`.
    - `list_models` covers this host only. Models and providers on other hosts are unknown: ask the user.
    - A family offered by two providers (e.g. Sol on Codex and on pi) gives a first choice (the newest id) and a fallback line with separate quota.
@@ -21,9 +21,10 @@ Goal: the project has a DISPATCH file and a lesson file the user has confirmed, 
    - **Compatibility**: users or data that depend on old behaviour. Default none: replaced code is deleted without migration.
    - **Decision log** location (propose one next to the dispatch file if the project has none).
    - **Card conventions**: branch naming, commit convention, card numbering, the verify commands a card's self-check runs, where the common card clauses file and reports live.
+   - **Docs**: the role map, the gaps you will fill and where, and the open questions found ([docs](docs.md)).
    - **Coordinator writes code?** Default no.
-4. **After the user confirms**, write the files below; append the `AGENTS.md` section (update it if one exists) and add the dispatch file to the project's docs index if it has one. Show the changes, then commit with the project's docs-commit convention.
-5. **Verify**: re-read every written file as a fresh coordinator would. Done when every template slot is filled or marked n/a, and every value the project and Paseo could not supply came from the user's answer.
+4. **After the user confirms**, write the files below and fill the doc gaps per [docs](docs.md); append the `AGENTS.md` section (update it if one exists) and add the dispatch file to the project's docs index if it has one. Show the changes, then commit with the project's docs-commit convention.
+5. **Verify**: have the recorded commands run ([docs § existing project](docs.md#existing-project), step 4), then re-read every written file as a fresh coordinator would. Done when every template slot is filled or marked n/a, every recorded command has passed (a new project has none yet), and every value the project and Paseo could not supply came from the user's answer.
 
 ## Where and in what language
 

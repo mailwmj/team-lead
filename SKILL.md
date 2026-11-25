@@ -1,6 +1,6 @@
 ---
 name: team-lead
-description: Run a project as its lead over a team of Paseo agents. Use when starting or resuming a coordinator session, setting up a new project for agent teamwork, or turning a request into a plan and task cards and judging what agents hand back.
+description: Run a project as its lead over a team of Paseo agents. Use when starting or resuming a coordinator session, setting up a new project or normalizing an existing one's docs for agent teamwork, or turning a request into a plan and task cards and judging what agents hand back.
 ---
 
 # Team lead
@@ -18,12 +18,12 @@ A project may keep them elsewhere; its `AGENTS.md` points to them.
 
 ## Session start
 
-1. Find the project's DISPATCH and lesson files: follow the pointer in `AGENTS.md` or the docs index; else `rg --files | rg -i 'dispatch|lesson'`. If there are none, run [init](references/init.md) and stop there until the user has confirmed it.
+1. Find the project's DISPATCH and lesson files: follow the pointer in `AGENTS.md` or the docs index; else `rg --files | rg -i 'dispatch|lesson'`. If there are none, or the user asks to set up or normalize the project's docs, run [init](references/init.md) and stop there until the user has confirmed it.
 2. Read both, plus the decision log and handoff notes if the project has them. They override any default in this skill.
 3. Read [models](references/models.md): cross-project model temperament and Paseo dispatch gotchas.
 4. `list_agents` and `list_schedules` on every host the project uses (pass `serverId` for remote hosts); these, not the handoff notes, say what is running. Pick the agents labelled `team-lead=<project>`, where `<project>` is the repository directory name in lowercase; agents from before labelling are listed in the handoff notes. Send each running one a message so their finish notifications reach you.
 
-Done when you can name, for this project: who to ask before what, which model takes which kind of work, where builds run, what blocks a merge, and where decisions are logged.
+Done when you can name, for this project: who to ask before what, which model takes which kind of work, where builds run, what blocks a merge, and where the spec, architecture, decisions and tracker live.
 
 ## Each piece of work
 
@@ -32,7 +32,7 @@ Done when you can name, for this project: who to ask before what, which model ta
 3. **Card.** One card per result that one verification method can judge. Split only when the split unlocks parallel work, isolates an unknown, or keeps the state a reviewer must hold small; lines and hours are self-check signals, not split rules. Use the [card template](references/card.md); acceptance follows [card § acceptance](references/card.md#acceptance). Route by task type with the DISPATCH table; confirm the model id with `list_models` first.
 4. **Dispatch.** Fresh Paseo session per card in its own worktree (location and setup per DISPATCH), labelled `team-lead=<project>`; follow-ups to the same code go to the same session. One writer per working directory; read-only work (review, research, fact-checks) runs in parallel freely. A card that builds on another starts from its branch once the interface is fixed, without waiting for the merge. Wait for the finish notification.
 5. **Judge.** Run the checks the card's complexity sets, under the rules in [review](references/review.md): independence, blocking vs suggestion, at most two rounds.
-6. **Land.** Merge and push the judged commit per [review § land](references/review.md#land) unless the DISPATCH ask-first list covers it. Every correction or rejected review item becomes a check in the same card ([review § mistakes become checks](references/review.md#mistakes-become-checks)). Record user decisions in the project's decision log; model behaviour goes to [models](references/models.md), project pitfalls to the project's lesson file.
+6. **Land.** Merge and push the judged commit per [review § land](references/review.md#land) unless the DISPATCH ask-first list covers it. Every correction or rejected review item becomes a check in the same card ([review § mistakes become checks](references/review.md#mistakes-become-checks)). Record user decisions in the project's decision log, open work and carried suggestions in its tracker; model behaviour goes to [models](references/models.md), project pitfalls to the project's lesson file.
 7. **Report.** Lead with what got done and what the user will see change. "Passed" and "done" only with evidence; numbers and status are ones you checked this time. Commands and debugging only when asked.
 
 ## When to ask the user

@@ -27,7 +27,7 @@ Citations go to a fact-checker before the plan uses them.
 
 ## The plan
 
-Write it yourself. It holds:
+Write it yourself and save it where plans live ([docs § roles](docs.md#roles)). It holds:
 
 - the end state and what is out of scope;
 - the research findings that shaped it;
