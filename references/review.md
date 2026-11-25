@@ -1,14 +1,6 @@
 # Review and judgement
 
-## Risk tiers
-
-| Tier | For | Process |
-|---|---|---|
-| Full | architecture decisions, phase gates, anything shipped to users | implement → independent verification (fresh session, tests from the final artefact) + read-only code review → lead judges against raw evidence |
-| Light | well-scoped fixes, small features | implementer self-verifies with evidence from the final artefact; add review only in the project's DISPATCH sensitive areas |
-| None | docs, scripts, config | no extra check |
-
-Later cards start from the earlier card's branch instead of waiting for its merge.
+Which checks a card gets is set by its complexity ([planning § complexity](planning.md#complexity)).
 
 ## Independence
 
@@ -27,7 +19,16 @@ Later cards start from the earlier card's branch instead of waiting for its merg
 
 ## Rounds
 
-Send each blocking item back to the implementer as the reviewer wrote it (trigger path, file:line, failing output), not paraphrased. You check fixes against the review items yourself. Blocking items get one re-review after fixing. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
+An APPROVE lands. A fix round opens only for blocking items; suggestions go to the delivery notes or to a later card touching the same area. Review and verification of one commit feed one fix round: send the first blocking result at once and steer later ones into the same round.
+
+Send each blocking item back to the implementer as the reviewer wrote it (trigger path, file:line, failing output), not paraphrased. A fix to a blocking item, a rewrite, or any change to code a verifier already probed goes back to the original reviewer and verifier, in parallel; a small fix to a suggestion is checked against the review items by you or the assistant. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
+
+## Land
+
+1. Merge in a temporary worktree off `origin/main`, never in a checkout another session writes.
+2. The branch head equals the judged hash ([independence](#independence)).
+3. After the merge, `git diff --quiet HEAD <judged commit>`: same tree, the branch's CI run is the evidence; otherwise wait for main's CI.
+4. Once main is green, remove the worktree and the card's local and remote branches; a verifier's worktree stays until its verdict is in.
 
 ## Mistakes become checks
 
@@ -36,5 +37,7 @@ Every user correction and every rejected review item is closed in the card that 
 1. Mechanically checkable → a check (guard test, lint rule, script assertion) whose failure message says how to fix it.
 2. Else, if an interface or directory change can make the wrong form unwritable → change the structure.
 3. Else → a lesson line, plus one sentence in the delivery on why no check was possible.
+
+Every blocking item found after dispatch also answers: which line of the plan or card should have stopped it? Close the gap where it lives: the card template or [acceptance](card.md#acceptance) practice if general, the project lesson if project-only, [models](models.md) if it is model temperament. Two models missing the same issue means the card was underspecified: fix the card before switching model.
 
 When adding a check, existing violations go into an allowlist that may only shrink; new code has zero. A lesson or rule already guarded by a check shrinks to one line naming the check; a rule the check fully guards is deleted.
