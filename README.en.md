@@ -1,11 +1,7 @@
-<p align="center">
-  <img src="assets/banner.jpg" alt="team-lead — Run a project as its tech lead over a multi-model team of Paseo agents" width="100%" />
-</p>
-
 <h1 align="center">team-lead</h1>
 
 <p align="center">
-  <strong>Turn your coordinator agent into a project tech lead orchestrating a multi-model team of Paseo agents.</strong>
+  <strong>An engineering management skill for multi-agent collaboration — turn a coordinator agent into a project Tech Lead orchestrating a multi-model agent team from planning to verified delivery.</strong>
 </p>
 
 <p align="center">
@@ -13,14 +9,21 @@
 </p>
 
 <p align="center">
-  <img alt="Platform" src="https://img.shields.io/badge/Skill-Claude%20Code%20%7C%20agy-0F172A?style=flat-square" />
-  <img alt="Orchestrator" src="https://img.shields.io/badge/Orchestrator-Paseo-F59E0B?style=flat-square" />
-  <img alt="Workflow" src="https://img.shields.io/badge/Principle-Quality%20Before%20Dispatch-10B981?style=flat-square" />
+  <img alt="Multi-Agent" src="https://img.shields.io/badge/Focus-Multi--Agent%20Collaboration-0F172A?style=flat-square" />
+  <img alt="Skill Standard" src="https://img.shields.io/badge/Format-SKILL.md-0284C7?style=flat-square" />
+  <img alt="Orchestrator" src="https://img.shields.io/badge/Orchestrator-Paseo-D97706?style=flat-square" />
+  <img alt="Principle" src="https://img.shields.io/badge/Principle-Quality%20Before%20Dispatch-059669?style=flat-square" />
+</p>
+
+<p align="center">
+  <img src="assets/architecture-en.png" alt="team-lead Multi-Agent Architecture Diagram" width="100%" />
 </p>
 
 ---
 
-`team-lead` is an agent skill for **Claude Code** and **Antigravity CLI (`agy`)**. It frames the coordinator session as the project's **Tech Lead**: the user sets goals, direction, and final calls; the lead owns the outcome — bootstrapping per-project dispatch config and docs, planning and cross-reviewing before a single line of code is written, writing task cards with falsifiable acceptance criteria, routing work across model families in isolated git worktrees, judging deliveries with independent read-only verification, and turning every mistake into a permanent check.
+`team-lead` is a reusable engineering methodology and `SKILL.md` package built for **multi-agent collaborative development**. Running on top of **Paseo** (multi-host agent and git worktree orchestration), it works with any coordinator harness that supports skills — such as Claude Code, Antigravity CLI (`agy`), and other `SKILL.md`-compatible agents.
+
+It positions the coordinator session as the project's **Tech Lead**: the user sets goals, direction, and final calls; the lead owns delivery — bootstrapping per-project dispatch config and docs, planning and cross-reviewing before a single line of code is written, writing task cards with falsifiable acceptance criteria, routing work across model families in isolated git worktrees, judging outputs via blind independent verification, and turning every mistake into a permanent check.
 
 > **Core tenet: Quality is set before dispatch.**
 > A defect fixed in the plan costs a sentence; the same defect caught in code costs a full fix round.
@@ -30,10 +33,10 @@
 ## Contents
 
 - [Why team-lead](#why-team-lead)
-- [Core Workflow and Complexity Ladder](#core-workflow-and-complexity-ladder)
-- [Multi-Model Routing and Independence](#multi-model-routing-and-independence)
+- [7-Step Closed Loop and Complexity Ladder](#7-step-closed-loop-and-complexity-ladder)
+- [Multi-Model Division of Labor](#multi-model-division-of-labor)
 - [Task Cards and Falsifiable Acceptance](#task-cards-and-falsifiable-acceptance)
-- [Mistakes Become Checks](#mistakes-become-checks)
+- [Independent Review and Mistakes-to-Checks Ratchet](#independent-review-and-mistakes-to-checks-ratchet)
 - [Project Init and Doc Roles](#project-init-and-doc-roles)
 - [Installation and Quick Start](#installation-and-quick-start)
 - [Repository Layout](#repository-layout)
@@ -42,93 +45,62 @@
 
 ## Why team-lead
 
-Spawning multiple coding agents ad hoc fails in predictable ways: vague specs lead to runaway rewrites, concurrent writers clobber each other's files, implementers write tautological tests and declare `PASS`, and the same failure mode repeats across tasks.
+Running multiple coding agents ad hoc breaks down in predictable ways: vague specs trigger runaway rewrites, concurrent writers clobber each other's working tree, implementers write tautological tests and declare `PASS`, and the same bug class keeps coming back across tasks.
 
-`team-lead` replaces ad-hoc prompting with four hard engineering constraints:
+`team-lead` brings multi-agent collaboration under four hard engineering constraints:
 
-1. **The lead writes no application code and trusts only raw evidence.** Strong models focus exclusively on judgment — framing, one-way doors, interfaces, card splits, and acceptance criteria. Fast mid-tier models implement and test against written cards; a cheaper standing assistant handles doc upkeep and clerical work.
+1. **The lead writes no application code and trusts only raw evidence.** Strong models focus exclusively on judgment — framing, one-way doors, interfaces, card splits, and acceptance criteria. Faster execution models implement, build, and probe against written cards; a cheaper standing assistant handles doc upkeep and clerical checks.
 2. **Plan before code.** Medium and complex work goes through written planning and a read-only **cross-family Plan Review** before any card is dispatched; architectural direction forks run **Dual Planning** in parallel.
-3. **Strict isolation and blind, independent review.** One fresh Paseo session and one git worktree per card; one writer per working directory. Reviewers and probe verifiers come from a **different model family**, run in fresh read-only sessions, never see the implementer's self-assessment or `PASS`, and pin every verdict to a single commit hash.
-4. **Method separated from project state.** The universal method lives in this skill repo; each project stores only its own `DISPATCH.md` config and `lesson.md` pitfalls — clean, portable, and self-contained.
+3. **Physical isolation and blind independent review.** One fresh Paseo session and one git worktree per card; strictly one writer per working directory. Reviewers and probe verifiers use a **different model family**, run in fresh read-only sessions, never see the implementer's self-assessment or `PASS`, and pin every verdict to a single commit hash.
+4. **Method separated from project state.** The universal collaboration method stays in this skill repo; each project keeps only its own `DISPATCH.md` config and `lesson.md` pitfalls — portable across projects with zero cross-contamination.
 
 ---
 
-## Core Workflow and Complexity Ladder
+## 7-Step Closed Loop and Complexity Ladder
 
 <p align="center">
-  <img src="assets/workflow.jpg" alt="End-to-end engineering pipeline from plan review and task cards through isolated parallel worktrees to independent verification and landing" width="100%" />
-  <br />
-  <sub><em>Plan &amp; cross-review (amber) → specification cards (ivory) → isolated parallel worktree chambers (cyan) → blind independent review &amp; probe gate (emerald) → verified merge to main</em></sub>
+  <img src="assets/workflow-en.png" alt="7-Step Closed Loop and Complexity Routing Flowchart" width="100%" />
 </p>
 
-Every piece of work runs through a **7-step closed loop** (see [`SKILL.md`](SKILL.md)):
+Every piece of work runs through a **7-step closed loop** (`Frame → Plan → Card → Dispatch → Judge → Land → Report`; see [`SKILL.md`](SKILL.md)). Process weight scales automatically with the **complexity tier** rated at `Frame` (see [`references/planning.md`](references/planning.md)):
 
-```mermaid
-flowchart LR
-    F["1. Frame<br/>End state · complexity"] --> P["2. Plan<br/>Research · plan · cross-review"]
-    P --> C["3. Card<br/>12-field contract · acceptance"]
-    C --> D["4. Dispatch<br/>Isolated worktrees in parallel"]
-    D --> J["5. Judge<br/>Independent review · probes"]
-    J -- "Blocking<br/>(max 2 rounds)" --> D
-    J -- "APPROVE<br/>Pinned commit hash" --> L["6. Land<br/>Temp-worktree merge · checks"]
-    L --> R["7. Report<br/>Outcome first · raw evidence"]
-```
-
-### Complexity Ladder
-
-Overhead scales strictly with risk. At the `Frame` step, the highest signal present sets the complexity tier, governing both **upfront planning** and **post-code verification** (see [`references/planning.md`](references/planning.md)):
-
-| Complexity | Signals | Before code | After code |
+| Complexity | Signals (highest signal wins) | Before code | After code |
 | :--- | :--- | :--- | :--- |
-| **Simple** | Single card on an existing pattern; no new interface or dependency | Write the card | Implementer self-verifies from the final artifact; code review only in `DISPATCH` sensitive areas; docs get no extra check |
+| **Simple** | Single card on an existing pattern; no new interface or dependency | Skip plan, write the card directly | Implementer self-verifies from the final artifact; code review only in `DISPATCH` sensitive areas; docs get no extra check |
 | **Medium** | Several cards, or a new interface inside known technology | Write plan → cross-family **Plan Review** | Read-only code review by a strong model |
 | **Complex** | Any **one-way door**; unknown platform/library behavior; concurrency, state machines, cross-module contracts; phase gates | Research + fact-check → plan (plus **Dual Planning** on direction forks) → **spike cards** for unknowns land first → Plan Review | **Code review** and **independent probe verification**, dispatched in parallel on the same commit |
 
-> **One-way door**: a decision costly to undo — data models, module boundaries, public interfaces, persistence formats, or a new dependency. Cards with visible UI changes add a visual check by the verifier.
+> **One-way door**: a choice costly to undo — data models, module boundaries, public interfaces, persistence formats, or a new dependency. Cards with visible UI changes add a visual check by the verifier; non-trivial copy or interaction changes also get post-implementation advice from a copy-strong model.
 
 ### Design Bar
 
 Every plan, plan review, and task card enforces four rules:
 
-- **Decide one-way doors for the long run now; keep everything else minimal.** No speculative abstractions for imagined future requirements.
+- **Decide one-way doors for the long run now; keep everything else minimal.** No speculative abstractions for imagined future needs.
 - **Lead with a tracer bullet.** The first card builds the thinnest runnable end-to-end path; later cards thicken it rather than re-cutting what already works.
 - **Reuse before writing.** Existing project code and dependencies → mature maintained library → proven product pattern → bespoke code last.
 - **Delete replaced code.** No compatibility shims, migrations, or fallback paths unless `DISPATCH.md` explicitly records users or data depending on old behavior.
 
 ---
 
-## Multi-Model Routing and Independence
+## Multi-Model Division of Labor
 
-<p align="center">
-  <img src="assets/routing.jpg" alt="Tiered multi-model studio: strong lead and cross-family reviewer separated by a privacy wall above specialized isolated worker bays and a standing archival assistant" width="100%" />
-  <br />
-  <sub><em>Upper tier: Lead (amber octahedron) and independent cross-family reviewer behind a privacy partition (emerald crystal); middle tier: specialized isolated worktree pods (UI, logic, probes, builds); side wing: standing doc assistant</em></sub>
-</p>
+Effective multi-agent collaboration does not clone one model N times — it routes work across model families and capability tiers, creating structural checks and balances between **decision, implementation, and verification**:
 
-### Three-Tier Division of Labor
+| Tier | Roles | Model Strategy | Core Responsibilities |
+| :--- | :--- | :--- | :--- |
+| **Decision** | Coordinator **Lead** | Strong model | Goal framing, complexity rating, architecture & one-way doors, card splits, falsifiable acceptance, landing calls |
+| **Judgment** | **Plan / Code Reviewer**, Independent Planner | **Cross-family** strong model (read-only) | Plan Review, Dual Planning (blind to lead's draft), blind code review, independent probe verification |
+| **Execution** | **Implementer / Verifier / Builder** | Fast mid-tier models | Card-driven UI & core logic in isolated worktrees, builds/device diagnostics, fact-checking |
+| **Clerical** | **Standing Assistant** | Low-cost standing session | Doc upkeep, card boilerplate, verifying minor suggestion fixes |
 
-- **Judgment & Review (Strong Models, Cross-Family)**: The Lead owns framing, architecture, interfaces, card splits, and acceptance. A strong model from a **different model family** serves as independent planner (Dual Planning), plan reviewer, and code reviewer.
-- **Execution & Verification (Fast Mid-Tier Models)**: Routed by task type (UI, core logic, builds/device diagnostics, fact-checking, independent probing) into isolated worktrees. Cards leave implementers *how* to write the code, never *what* to build or *which* approach to pick.
-- **Clerical Support (Standing Assistant)**: Handles doc upkeep, card boilerplate, and verifying minor suggestion fixes, while goals, scope, acceptance, and technical decisions stay with the Lead.
-
-### Rules of Independent Judgment
-
-Defined in [`references/review.md`](references/review.md):
-
-- **Strict independence**: Verifier and reviewer use a **different model family** from the implementer, run in a **fresh read-only session**, and are never shown the implementer's self-assessment or `PASS`.
-- **One verdict, one commit**: Review and verification cards name the exact commit hash and the verdict repeats it. Before landing, the branch head must equal the judged commit hash (or every subsequent commit must be verified against review items); otherwise re-review.
-- **Blocking vs. Suggestion**: Only issues that hit the project's `DISPATCH` blocking list, violate the card's stated claim/scope, or break an existing test/contract — **with a concrete trigger path** — are `Blocking`. Out-of-scope edge cases are re-graded to carried suggestions in the tracker and never hold up a merge.
-- **At most two fix rounds**: Review and probe results on a commit feed a single fix round; blocking items are sent back verbatim (never paraphrased). If blocking items remain after round two, escalate to the user with a recommendation.
-
-### Living Model Temperament Notes
-
-Cross-project empirical notes on real model families and Paseo operational mechanics live in [`references/models.md`](references/models.md) — covering observed strengths, failure modes, card guardrails, `xhigh` vs. `max`/`ultra` thinking levels, `team-lead=<project>` agent labeling, remote host nuances, and `steer` vs. queued delivery. It evolves as models change, keeping project configs clean.
+Cross-project empirical notes on real model families (strengths, failure modes, card guardrails) and Paseo operational mechanics (`xhigh` vs. `max`/`ultra`, `team-lead=<project>` labels, `steer` vs. queue, remote host quirks) live in [`references/models.md`](references/models.md) and evolve with real project data.
 
 ---
 
 ## Task Cards and Falsifiable Acceptance
 
-A task card is the **entire contract**: the worker agent sees only the card and its worktree. A card missing any required section is never sent (full spec in [`references/card.md`](references/card.md)).
+A task card is the **entire contract**: the worker agent sees only the card and its worktree. A card missing any required field is never dispatched (full spec in [`references/card.md`](references/card.md)).
 
 ### Falsifiable Acceptance
 
@@ -146,7 +118,7 @@ input or state  →  expected behavior  →  how it is observed (test name / com
 
 ### Conclusion-First Delivery Protocol
 
-Because Paseo finish notifications truncate long outputs, every worker's final reply must open verbatim with a status keyword so the lead can act immediately:
+Because Paseo finish notifications truncate long outputs, every worker's final reply opens verbatim with a status keyword so the lead can act immediately:
 
 | First Word | Meaning | Lead's Next Step |
 | :--- | :--- | :--- |
@@ -175,31 +147,39 @@ Because Paseo finish notifications truncate long outputs, every worker's final r
 
 ---
 
-## Mistakes Become Checks
+## Independent Review and Mistakes-to-Checks Ratchet
 
 <p align="center">
-  <img src="assets/mistakes-to-checks.jpg" alt="A caught crimson defect shard routed along a brass feedback rail into an amber forge and snapped as a permanent emerald ratchet guard onto the pipeline gate" width="100%" />
-  <br />
-  <sub><em>Caught defect (crimson) → feedback loop &amp; forge (amber) → permanent automated guard pin locked into the gate (emerald)</em></sub>
+  <img src="assets/ratchet-en.png" alt="Independent Review and Mistakes-to-Checks Ratchet Flowchart" width="100%" />
 </p>
 
-Every user correction and every rejected review item is closed in the same fix card using a **three-tier ratchet** (see [`references/review.md`](references/review.md#mistakes-become-checks)):
+All review, landing, and ratchet rules are defined in [`references/review.md`](references/review.md):
 
-1. **Make it mechanically checkable**: add a guard test, lint rule, or script assertion whose failure message explains how to fix it. Existing violations go into a **shrink-only allowlist**; new code gets zero tolerance.
-2. **Else make the wrong form unwritable**: reshape the interface or directory structure so the mistake cannot be expressed.
-3. **Else record a lesson**: add a line to the project's `lesson.md` plus one sentence in the delivery explaining why no mechanical check was possible. Once guarded by a check, a lesson shrinks to a single line naming that check (or is deleted if fully enforced).
+### Rules of Independent Judgment
 
-Every post-dispatch blocking issue also closes its **upstream gap**: *which line of the plan or card should have stopped it?* General gaps update [`card.md`](references/card.md), project-only pitfalls go to `lesson.md`, and model quirks go to [`models.md`](references/models.md). When two models miss the same bug, the card was underspecified — fix the card before switching models.
+- **Strictly blind**: Verifier and reviewer use a **different model family** from the implementer, run in a **fresh read-only session**, and are never shown the implementer's self-assessment or `PASS`.
+- **One verdict, one commit**: Review cards name the exact commit hash and verdicts repeat it. Landing merges in a **temporary worktree** off `origin/main` only when branch `HEAD` matches the judged commit hash.
+- **Strict triage & two-round cap**: Only issues hitting `DISPATCH` blocking criteria, violating the card's stated claim/scope, or breaking an existing test/contract — **with a concrete trigger path** — are `Blocking`. Everything else is logged as a `Suggestion` in the tracker and never holds up a merge. Review and probe findings on the same commit feed one fix round, forwarded verbatim; if blocking items remain after round two, escalate to the user with a recommendation.
+
+### Three-Tier Ratchet (Mistakes Become Checks)
+
+Every user correction and every rejected review item is closed in the same fix card along a strict priority ladder:
+
+1. **Mechanically checkable → automated guard**: add a guard test, lint rule, or script assertion whose failure message explains how to fix it. Existing violations go into a **shrink-only allowlist**; new code gets zero tolerance.
+2. **Else structurally preventable → reshape interface or layout**: make the wrong form impossible to write.
+3. **Else record a lesson**: add a line to `lesson.md` plus one sentence in the delivery explaining why no mechanical check was possible. Once guarded by a check, a lesson shrinks to a one-line pointer (or is deleted when fully enforced).
+
+Every post-dispatch blocking item also closes its **upstream gap** in [`card.md`](references/card.md) (general), `lesson.md` (project-only), or [`models.md`](references/models.md) (model temperament). When two models miss the same bug, the card was underspecified — fix the card before switching models.
 
 ---
 
 ## Project Init and Doc Roles
 
-When starting on a repository without `DISPATCH.md` / `lesson.md`, or when asked to normalize an existing repo for agent teamwork, the Lead runs **Init** ([`references/init.md`](references/init.md) & [`references/docs.md`](references/docs.md)):
+When starting on a repository without `DISPATCH.md` / `lesson.md`, or normalizing an existing repo for multi-agent teamwork, the Lead runs **Init** ([`references/init.md`](references/init.md) & [`references/docs.md`](references/docs.md)):
 
-- **Ask, never guess**: Reads the codebase, CI, and scripts, then inspects the Paseo fleet (`list_hosts`, `list_providers`, `list_models`, `list_profiles`). Everything neither the repo nor Paseo specifies (concurrency limits, machine privacy clauses, remote-host models, ask-first rules) is gathered into **one consolidated confirmation proposal** with explicit recommendations.
-- **New & existing projects**: New projects start from the user's brief (`Entry`, `Spec`, `Development`), treat `Architecture` as the first complex plan, and open with a tracer-bullet card. Existing projects keep existing docs in place, map them to roles, fill only missing gaps, flag doc-vs-code discrepancies as open questions, and verify every build/test command in a fresh worktree before recording it.
-- **Restrained escalation**: Once running, the lead only interrupts the user for items on the ask-first list, open decisions that change the outcome after checking all evidence, or human-only steps (physical device, login, password) — finishing all independent work first and asking once with a recommendation and trade-offs.
+- **Ask, never guess**: Reads the repo, scripts, and CI, then queries the Paseo fleet (`list_hosts`, `list_providers`, `list_models`, `list_profiles`). Everything neither the repo nor Paseo specifies (concurrency limits, machine privacy clauses, remote-host models, ask-first rules) is gathered into **one consolidated confirmation proposal** with explicit recommendations.
+- **New & existing projects**: New projects generate `Entry`, `Spec`, and `Development` from the user's brief and plan `Architecture` as the first complex piece of work. Existing projects keep existing docs in place, map them to roles, fill only missing gaps, flag doc-vs-code discrepancies as open questions, and verify every build/test command in a fresh worktree before recording it.
+- **Restrained escalation**: Once running, the lead only interrupts the user for ask-first items, open decisions that change the outcome after checking evidence, or human-only steps (physical device, login, password) — finishing all independent work first and asking once with recommendations and trade-offs.
 
 ### 9 Project Doc Roles (Single Source of Truth)
 
@@ -223,30 +203,32 @@ Each fact has one home; everything else links to it. A role becomes its own file
 
 ### Prerequisites
 
-- **Coordinator client**: **Claude Code** or **Antigravity CLI (`agy`)**
-- **Agent orchestrator**: **Paseo** (connected via MCP or CLI for managing hosts, git worktrees, agents, schedules, and finish notifications)
+- **Any `SKILL.md`-compatible coordinator agent**: e.g., Claude Code, Antigravity CLI (`agy`), or another agent harness supporting skills
+- **Multi-agent orchestration layer**: **Paseo** (connected via MCP or CLI to manage multi-model workers, git worktrees, remote hosts, schedules, and finish notifications)
 
 ### Install
 
-Clone this repository and symlink it into your client's skills directory (keeping it as a git checkout makes pulling updates and updating `references/models.md` effortless):
+Clone this repository and symlink it into your coordinator agent's skills directory (keeping it as a git checkout makes pulling updates and recording cross-project findings in [`references/models.md`](references/models.md) seamless):
 
 ```bash
 git clone https://github.com/mailwmj/team-lead.git /path/to/team-lead
 
-# Claude Code
+# Example 1: Claude Code
 mkdir -p ~/.claude/skills
 ln -s /path/to/team-lead ~/.claude/skills/team-lead
 
-# Antigravity CLI (agy)
+# Example 2: Antigravity CLI (agy)
 mkdir -p ~/.gemini/config/skills
 ln -s /path/to/team-lead ~/.gemini/config/skills/team-lead
+
+# Other SKILL.md-compatible clients: symlink or copy into your client's skills directory
 ```
 
 ### Usage
 
 1. **First run in a project (Init)**
    Open a coordinator session in your repository and invoke `team-lead`:
-   > "Use `team-lead` to initialize this project's agent dispatch config and docs."
+   > "Use `team-lead` to initialize this project's multi-agent dispatch config and docs."
 
    The lead inspects the project and your Paseo fleet, presents one consolidated proposal for confirmation, writes `DISPATCH.md`, `lesson.md`, and the `AGENTS.md` addition, fills doc gaps, and verifies build/test commands in a fresh worktree.
 
@@ -259,15 +241,15 @@ ln -s /path/to/team-lead ~/.gemini/config/skills/team-lead
 
 ```text
 team-lead/
-├── README.md                  # Project documentation (Chinese default)
-├── README.en.md               # Project documentation (English)
-├── SKILL.md                   # Skill entry: lead role, session start, 7-step loop, escalation rules
-├── assets/                    # README illustrations
+├── README.md                    # Project documentation (Chinese default)
+├── README.en.md                 # Project documentation (English)
+├── SKILL.md                     # Skill entry: lead role, session start, 7-step loop, escalation rules
+├── assets/                      # Flat-style architecture & workflow diagrams (3 ZH + 3 EN)
 └── references/
-    ├── init.md                # Project init workflow & DISPATCH / lesson / AGENTS templates
-    ├── docs.md                # 9 project doc roles, maintenance rules, new vs. existing setup
-    ├── planning.md            # Complexity ladder, research, plan structure, design bar, plan review & dual planning
-    ├── card.md                # 12-field task card template, falsifiable acceptance & delivery protocol
-    ├── review.md              # Independent review, blocking vs. suggestion, 2-round cap, landing & mistakes-to-checks
-    └── models.md              # Cross-project empirical model temperaments & Paseo dispatch mechanics
+    ├── init.md                  # Project init workflow & DISPATCH / lesson / AGENTS templates
+    ├── docs.md                  # 9 project doc roles, maintenance rules, new vs. existing setup
+    ├── planning.md              # Complexity ladder, research, plan structure, design bar, plan review & dual planning
+    ├── card.md                  # 12-field task card template, falsifiable acceptance & delivery protocol
+    ├── review.md                # Independent review, blocking vs. suggestion, 2-round cap, landing & mistakes-to-checks
+    └── models.md                # Cross-project empirical model temperaments & Paseo dispatch mechanics
 ```
