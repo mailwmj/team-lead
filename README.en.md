@@ -68,9 +68,9 @@ Every piece of work runs through a **7-step closed loop** (`Frame → Plan → C
 | :--- | :--- | :--- | :--- |
 | **Simple** | Single card on an existing pattern; no new interface or dependency | Skip plan, write the card directly | Implementer self-verifies from the final artifact; code review only in `DISPATCH` sensitive areas; docs get no extra check |
 | **Medium** | Several cards, or a new interface inside known technology | Write plan → cross-family **Plan Review** | Read-only code review by a strong model |
-| **Complex** | Any **one-way door**; unknown platform/library behavior; concurrency, state machines, cross-module contracts; phase gates | Research + fact-check → plan (plus **Dual Planning** on direction forks) → **spike cards** for unknowns land first → Plan Review | **Code review** and **independent probe verification**, dispatched in parallel on the same commit |
+| **Complex** | Any **one-way door**; unknown platform/library behavior; concurrency, state machines, cross-module contracts; runtime state shared across cards (scroll, focus, navigation); gestures and frame timing; phase gates | Research + fact-check → plan (plus **Dual Planning** on direction forks) → **spike cards** for unknowns land first → Plan Review | **Code review** and **independent probe verification**, dispatched in parallel on the same commit |
 
-> **One-way door**: a choice costly to undo — data models, module boundaries, public interfaces, persistence formats, or a new dependency. Cards with visible UI changes add a visual check by the verifier; non-trivial copy or interaction changes also get post-implementation advice from a copy-strong model.
+> **One-way door**: a choice costly to undo — data models, module boundaries, public interfaces, persistence formats, or a new dependency. On cards with visible UI changes the reviewer checks the screenshots, and the verifier adds a visual check only on Complex cards; non-trivial copy or interaction changes also get post-implementation advice from a copy-strong model.
 
 ### Design Bar
 

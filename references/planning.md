@@ -10,9 +10,15 @@ Rate the piece of work for its planning and each card for its checks; the highes
 |---|---|---|---|
 | Simple | one card on an existing pattern; no new interface or dependency | write the card | implementer self-verifies with evidence from the final artefact; code review only in DISPATCH sensitive areas; docs get no extra check |
 | Medium | several cards, or a new interface inside known technology | [plan](#the-plan) → [plan review](#plan-review) | read-only code review by a strong model |
-| Complex | any one-way door; unknown platform or library behaviour; concurrency, state machines, cross-module contracts; phase gates | [research](#research) → plan, plus [dual planning](#dual-planning) on a direction fork → plan review; spike cards for the unknowns land first | code review and independent probe verification, dispatched in parallel on the same commit |
+| Complex | any one-way door; unknown platform or library behaviour; concurrency, state machines, cross-module contracts; runtime state shared across cards (scroll, focus, navigation); gestures and frame timing; phase gates | [research](#research) → plan, plus [dual planning](#dual-planning) on a direction fork → plan review; spike cards for the unknowns land first | code review and independent probe verification, dispatched in parallel on the same commit |
 
-A **one-way door** is a choice costly to undo: data model, module boundaries, public interfaces, persistence formats, a new dependency. Cards with visible UI add a visual check by the verifier.
+A **one-way door** is a choice costly to undo: data model, module boundaries, public interfaces, persistence formats, a new dependency.
+
+Cards with visible UI: the reviewer checks the screenshots; a verifier adds a visual check only on Complex cards.
+
+A change to code that passed probe verification is rated at least as complex as the card that verified it, whatever its size: a cleanup that touches it is a rewrite.
+
+Each card gets exactly the checks its own signals set. Skip none to save time: in one phase nearly every card's review or verification caught a real defect.
 
 ## Research
 
@@ -35,6 +41,7 @@ Write it yourself and save it where plans live ([docs § roles](docs.md#roles)).
 - modules, one concern each, and the interface signatures between them;
 - risks: each unknown gets a spike card that lands before the cards depending on it;
 - cards with their dependency graph and parallel lanes; parallel cards share no files, tests included;
+- for runtime state two cards both write (scroll position, focus, navigation stack), one owner card; the other goes through its interface, since cards that pass alone can overwrite each other in the same frame once merged;
 - acceptance scenarios per card ([card § acceptance](card.md#acceptance)).
 
 ### Design bar
@@ -51,7 +58,7 @@ The plan, its review and the cards hold to:
 Send the plan and the batch's card drafts to a strong reviewer of another model family, read-only. It reports blocking items and suggestions ([review § blocking vs suggestion](review.md#blocking-vs-suggestion)) on:
 
 - breaches of the design bar, and weak one-way-door choices;
-- the card split and file overlap between parallel cards;
+- the card split, and file or runtime-state overlap between parallel cards;
 - per card, a wrong implementation that passes every acceptance item. Each one found is a hole: close it in the acceptance.
 
 Before it reads, a fast model checks that every function, file and path the cards name exists. Fix the blocking items, then dispatch; review again only if a one-way door changed.

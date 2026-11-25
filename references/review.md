@@ -11,6 +11,19 @@ Which checks a card gets is set by its complexity ([planning § complexity](plan
 - When a diff changes shared tooling, config, CI, hooks or lint rules, run the corresponding contract or plugin tests.
 - Research and code claims from careless models are checked by a fact-checker (file:line plus quoted text) before you use them.
 
+## Review and verification cards
+
+A review or verification card is the fixed body below plus at most 10 lines of its own: branch, commit hash, path of the card under review, and this card's focus points. Append the project's common card clauses and restricted-machine clause as for any card.
+
+```
+[Role] Independent reviewer | verifier of one commit. Read-only: leave code and branches as they are.
+[Read] The card under review and its acceptance, then the diff at the named hash. Leave the implementer's report unread.
+[Reviewer] Judge the diff against the card's scope and acceptance; on UI cards, look at the screenshots.
+[Verifier] Write probes from the card's claims before reading the implementer's tests; run them on the named hash or merge branch; on UI cards, capture and look at screenshots.
+[Grade] Blocking: hits the project's blocking list, breaks the card's claim or scope, or breaks an existing test or contract, each with a trigger path, file:line and failing output. Everything else is a suggestion.
+[Delivery] First word APPROVE or BLOCK (NEEDS-INPUT or STUCK when it cannot judge); the judged hash; one line per blocking item, then suggestions; detail to the report file DISPATCH names.
+```
+
 ## Blocking vs suggestion
 
 - Blocking: only issues that hit the project's DISPATCH blocking list, violate the card's stated claim or scope, or break an existing test or contract, and only with a concrete trigger path (inputs, state or failing check).
@@ -21,14 +34,15 @@ Which checks a card gets is set by its complexity ([planning § complexity](plan
 
 An APPROVE lands. A fix round opens only for blocking items; suggestions go to the tracker's carried suggestions ([docs § roles](docs.md#roles)) for a later card touching the same area. Review and verification of one commit feed one fix round: send the first blocking result at once and steer later ones into the same round.
 
-Send each blocking item back to the implementer as the reviewer wrote it (trigger path, file:line, failing output), not paraphrased. A fix to a blocking item, a rewrite, or any change to code a verifier already probed goes back to the original reviewer and verifier, in parallel; a small fix to a suggestion is checked against the review items by you or the assistant. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
+Send each blocking item back to the implementer as the reviewer wrote it (trigger path, file:line, failing output), not paraphrased. A fix to a blocking item goes back to the original reviewer, and to the original verifier too when the verifier raised it or the fix changes code it probed; a rewrite goes back to both, in parallel. A small fix to a suggestion is checked against the review items by you or the assistant. At most two rounds: if blocking items remain after the second, take it to the user with your recommendation.
 
 ## Land
 
 1. Merge in a temporary worktree off `origin/main`, never in a checkout another session writes.
 2. The branch head equals the judged hash ([independence](#independence)).
-3. After the merge, `git diff --quiet HEAD <judged commit>`: same tree, the branch's CI run is the evidence; otherwise wait for main's CI.
-4. Once main is green, remove the worktree and the card's local and remote branches; a verifier's worktree stays until its verdict is in.
+3. Cards that write the same runtime state: before the later one lands, the verifier probes it merged with the other.
+4. After the merge, `git diff --quiet HEAD <judged commit>`: same tree, the branch's CI run is the evidence; otherwise wait for main's CI.
+5. Once main is green, remove the worktree and the card's local and remote branches; a verifier's worktree stays until its verdict is in.
 
 ## Mistakes become checks
 

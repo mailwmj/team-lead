@@ -1,6 +1,6 @@
 # Card template
 
-A card is the whole contract: the agent sees only the card and the worktree. A card missing any field below is not sent. Write it in the project's doc language (translate the field names too); append the project's common card clauses (DISPATCH §5) and, for restricted machines, their boundary clause verbatim.
+A card is the whole contract: the agent sees only the card and the worktree. A card missing any field below is not sent; review and verification cards use [their fixed body](review.md#review-and-verification-cards) instead. Write it in the project's doc language (translate the field names too); append the project's common card clauses (DISPATCH §5) and, for restricted machines, their boundary clause verbatim.
 
 ```
 [Role] You are … (one sentence)
@@ -9,7 +9,7 @@ A card is the whole contract: the agent sees only the card and the worktree. A c
 [Goal] One sentence: the state when done.
 [Scope] Files, functions and lines to change; existing code to follow; functions and components it must call; what is explicitly out of scope.
 [Steps] Numbered, concrete steps.
-[Self-check] Run the card's tests locally until green before pushing; CI is final evidence, not a debugger. Commands after each step: only the tests it wrote or changed; typecheck, lint and format once at the end; run long build/test commands synchronously or with an adequate timeout.
+[Self-check] Run the card's tests locally until green before pushing; CI is final evidence, not a debugger. Commands after each step: only the tests it wrote or changed; typecheck, lint and format once at the end; the full suite is left to CI where the project has one; run long build/test commands synchronously or with an adequate timeout.
 [Acceptance] A checklist of scenarios (see [acceptance](#acceptance)); each item names its evidence (command output, file:line, screenshot, hash).
 [Guard the class] Required on fix cards: which check or structure stops this class of mistake; if none is possible, why.
 [Stop conditions] Stop and report after 3 different approaches fail on the same item; never change acceptance criteria or skip checks.
@@ -32,6 +32,7 @@ Acceptance is the spec the implementer optimises for: write it so only a correct
 - Name functions, not intentions: "call `buildGroups()` from `x.ts`", not "reuse the grouping logic". Agents that may rewrite instead of reuse get an explicit "do not rewrite X" and a cap on lines changed outside the card's scope.
 - The implementer adds no dependency the card does not name, no abstraction beyond the card's interfaces, and no test-only code in production; it uses the platform's standard components, and a custom one needs a stated reason. Past ~1.5x the estimated lines, it simplifies before delivering.
 - Acceptance evidence comes from the final artefact (built package, merged branch), with commit hash and sha256 where there is a binary.
+- When a card replaces behaviour, `[Scope]` lists the existing tests and screenshot baselines it legitimately invalidates and authorizes updating them; any failure outside that list is still a stop. Without the list, the implementer stops with NEEDS-INPUT before starting.
 - Spec excerpts go into the card or as `git show origin/main:<path>`: a feature branch may not have the latest docs.
 - Long tasks start with "do not end the turn before the whole card is committed and pushed" when the model tends to stop early (see [models](models.md)).
 - Physical steps the user must do are one checklist done in one go, with the agent already capturing logs and the user replying "done" at the end; anything a command can do is automated first.
