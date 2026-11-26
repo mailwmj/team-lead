@@ -71,6 +71,8 @@ Every piece of work runs through a **7-step closed loop** (`Frame → Plan → C
 | **Complex** | Any **one-way door**; unknown platform/library behavior; concurrency, state machines, cross-module contracts; runtime state shared across cards (scroll, focus, navigation); gestures and frame timing; phase gates | Research + fact-check → plan (plus **Dual Planning** on direction forks) → **spike cards** for unknowns land first → Plan Review | **Code review** and **independent probe verification**, dispatched in parallel on the same commit |
 
 > **One-way door**: a choice costly to undo — data models, module boundaries, public interfaces, persistence formats, or a new dependency. On cards with visible UI changes the reviewer checks the screenshots, and the verifier adds a visual check only on Complex cards; non-trivial copy or interaction changes also get post-implementation advice from a copy-strong model.
+>
+> **Scheduling & no-downgrade discipline**: Dispatch follows the **dependency graph**, not milestones (launch any card whose upstream interface is fixed whenever a slot opens; milestones are reporting points, not barriers). Any edit to probe-verified code stays at least as complex as the card that verified it, and no card skips the checks its signals set. Runtime state shared across cards (scroll, focus, navigation) gets a **single owner card**, and later cards touching it are probed merged with the earlier one before landing.
 
 ### Design Bar
 
@@ -92,7 +94,7 @@ Effective multi-agent collaboration does not clone one model N times — it rout
 | **Decision** | Coordinator **Lead** | Strong model | Goal framing, complexity rating, architecture & one-way doors, card splits, falsifiable acceptance, landing calls |
 | **Judgment** | **Plan / Code Reviewer**, Independent Planner | **Cross-family** strong model (read-only) | Plan Review, Dual Planning (blind to lead's draft), blind code review, independent probe verification |
 | **Execution** | **Implementer / Verifier / Builder** | Fast mid-tier models | Card-driven UI & core logic in isolated worktrees, builds/device diagnostics, fact-checking |
-| **Clerical** | **Standing Assistant** | Low-cost standing session | Doc upkeep, card boilerplate, verifying minor suggestion fixes |
+| **Clerical** | **Standing Assistant** | Low-cost standing session | Doc upkeep, card boilerplate, verifying minor suggestion fixes & unreviewed out-of-scope check edits |
 
 Cross-project empirical notes on real model families (strengths, failure modes, card guardrails) and Paseo operational mechanics (`xhigh` vs. `max`/`ultra`, `team-lead=<project>` labels, `steer` vs. queue, remote host quirks) live in [`references/models.md`](references/models.md) and evolve with real project data.
 
@@ -100,7 +102,7 @@ Cross-project empirical notes on real model families (strengths, failure modes, 
 
 ## Task Cards and Falsifiable Acceptance
 
-A task card is the **entire contract**: the worker agent sees only the card and its worktree. A card missing any required field is never dispatched (full spec in [`references/card.md`](references/card.md)).
+A task card is the **entire contract**: the worker agent sees only the card and its worktree. A card missing any required field is never dispatched (screens sharing a data source, UI pattern, and acceptance method are one card; full spec in [`references/card.md`](references/card.md)). Review and probe verification cards use a compact **6-field fixed body** plus at most 10 card-specific lines (see [`references/review.md`](references/review.md)).
 
 ### Falsifiable Acceptance
 
@@ -157,9 +159,9 @@ All review, landing, and ratchet rules are defined in [`references/review.md`](r
 
 ### Rules of Independent Judgment
 
-- **Strictly blind & base-branch rules**: Verifier and reviewer use a **different model family** from the implementer, run in a **fresh read-only session**, and are never shown the implementer's self-assessment or `PASS`. Reviewers read `lesson.md` from `origin/main` to check diff-triggered items and verify existing check changes stay within the card's `[Scope]` list.
-- **One verdict, one commit, stamped at land**: Review cards name the exact commit hash and verdicts repeat it. Landing merges in a **temporary worktree** off `origin/main` only when branch `HEAD` matches the judged commit hash, routes unreviewed check-file edits/deletions outside `[Scope]` to the standing assistant first, and records a `Verified:` trailer (including `self`) on the merge/squash commit.
-- **Strict triage & two-round convergence**: Only issues hitting `DISPATCH` blocking criteria, violating the card's stated claim/scope (including loosening an unlisted existing check), or breaking an existing test/contract — **with a concrete trigger path** — are `Blocking`. Everything else is logged as a `Suggestion` (or tagged `pre-existing` when reproduced on `origin/main` and filed as a standalone tracker bug) and never holds up a merge. Review and probe findings on the same commit feed one fix round, forwarded verbatim; round two focuses on round-one blocking items and the incremental diff (plus callers); if blocking items remain after round two, escalate to the user with a recommendation.
+- **Strictly blind & base-branch rules**: Verifier and reviewer use a **different model family** from the implementer, run in a **fresh read-only session** via a fixed 6-field review/verification card (+ ≤10 card-specific lines), and are never shown the implementer's self-assessment or `PASS`. Reviewers read `lesson.md` from `origin/main` to check diff-triggered items and verify existing check changes stay within the card's `[Scope]` list.
+- **One verdict, one commit, stamped at land**: Review cards name the exact commit hash and verdicts repeat it. Landing merges in a **temporary worktree** off `origin/main` only when branch `HEAD` matches the judged commit hash, probes cards sharing runtime state merged before the later one lands, routes unreviewed check-file edits/deletions outside `[Scope]` to the standing assistant first, and records a `Verified:` trailer (including `self`) on the merge/squash commit.
+- **Strict triage & two-round convergence**: Only issues hitting `DISPATCH` blocking criteria, violating the card's stated claim/scope (including loosening an unlisted existing check), or breaking an existing test/contract — **with a concrete trigger path** — are `Blocking`. Everything else is logged as a `Suggestion` (or tagged `pre-existing` when reproduced on `origin/main` and filed as a standalone tracker bug) and never holds up a merge. Review and probe findings on the same commit feed one fix round, forwarded verbatim; round two returns to the original reviewer (and the original verifier only if it raised the issue, probed code changed, or it was a rewrite) focused on round-one blocking items and the incremental diff plus callers; if blocking items remain after round two, escalate to the user with a recommendation.
 
 ### Three-Tier Ratchet (Mistakes Become Checks)
 
@@ -195,7 +197,7 @@ Each fact has one home; everything else links to it. A role becomes its own file
 | **Decisions** | User decisions and one-way doors (date, choice, why) | Everyone | `docs/agents/decisions.md` |
 | **Tracker** | Active work, blockers + smallest unblock step, deferred items, carried suggestions, recently done (also handoff notes) | Lead at session start | `docs/agents/handoff.md` |
 | **Plans** | One plan per medium or complex piece of work | Plan Review, cards | `docs/plans/<slug>.md` |
-| **Dispatch / Lesson** | Project dispatch config (overrides skill defaults) & project-only pitfalls | Lead | `docs/agents/DISPATCH.md`<br>`docs/agents/lesson.md` |
+| **Dispatch / Lesson** | Project dispatch config (overrides skill defaults) & diff-triggered risk lessons | Lead (`lesson` also read by reviewers at `origin/main`) | `docs/agents/DISPATCH.md`<br>`docs/agents/lesson.md` |
 
 ---
 
@@ -250,6 +252,6 @@ team-lead/
     ├── docs.md                  # 9 project doc roles, maintenance rules, new vs. existing setup
     ├── planning.md              # Complexity ladder, research, plan structure, design bar, plan review & dual planning
     ├── card.md                  # 12-field task card template, falsifiable acceptance & delivery protocol
-    ├── review.md                # Independent review, blocking vs. suggestion, 2-round cap, landing & mistakes-to-checks
+    ├── review.md                # Fixed review/probe template, independent review, 2-round convergence, stamped landing & ratchet
     └── models.md                # Cross-project empirical model temperaments & Paseo dispatch mechanics
 ```

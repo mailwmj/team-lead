@@ -14,7 +14,7 @@ Agents read the project's docs instead of guessing; a fact they need and cannot 
 | Decisions | user decisions and one-way doors: date, choice, why | everyone | next to DISPATCH: `docs/agents/decisions.md` |
 | Tracker | current; blocked, with the smallest unblocking step; deferred; suggestions carried to later cards, by area; recently done. It is also the handoff notes | lead at session start | next to DISPATCH: `docs/agents/handoff.md` |
 | Plans | one per medium or complex piece of work ([planning](planning.md#the-plan)) | plan review, cards | `docs/plans/<slug>.md` |
-| Dispatch, lesson | see [init](init.md) | lead | `docs/agents/` |
+| Dispatch, lesson | see [init](init.md) | lead (`lesson` also read by reviewer at `origin/main`) | `docs/agents/` |
 
 A role becomes a file only when it has material of its own: a small project may keep spec and architecture as sections of `AGENTS.md`, and an existing issue tracker can be the tracker.
 
