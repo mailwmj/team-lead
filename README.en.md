@@ -77,7 +77,7 @@ Every piece of work runs through a **7-step closed loop** (`Frame → Plan → C
 Every plan, plan review, and task card enforces four rules:
 
 - **Decide one-way doors for the long run now; keep everything else minimal.** No speculative abstractions for imagined future needs.
-- **Lead with a tracer bullet.** The first card builds the thinnest runnable end-to-end path; later cards thicken it rather than re-cutting what already works.
+- **Lead with a tracer bullet.** The first card builds the thinnest runnable end-to-end path together with the runnable `verify` command that drives it; later cards thicken it rather than re-cutting what already works.
 - **Reuse before writing.** Existing project code and dependencies → mature maintained library → proven product pattern → bespoke code last.
 - **Delete replaced code.** No compatibility shims, migrations, or fallback paths unless `DISPATCH.md` explicitly records users or data depending on old behavior.
 
@@ -112,8 +112,8 @@ Every acceptance item is written as a falsifiable scenario:
 input or state  →  expected behavior  →  how it is observed (test name / command output / screenshot / hash)
 ```
 
-- **A wrong implementation must fail at least one item.** Scenarios come directly from the plan's risks: platform semantics, double-firing callbacks, late async results, main-thread delivery, hangs/timeouts, interleavings, and counter-examples of past failures.
-- The implementer writes the scenarios as **failing tests first**. On complex cards, the verifier writes its own probes from the card's claims **before reading the implementer's tests**.
+- **A wrong implementation must fail at least one item.** Scenarios come directly from the plan's risks: platform semantics, double-firing callbacks, late async results, main-thread delivery, hangs/timeouts, interleavings, and counter-examples of past failures. Prefer **property-based tests** for invariants, round-trip encoding, state machines, and optimizations; for rewrites or migrations, run **differential tests** against the old implementation inside the same card before deleting it.
+- The implementer writes the scenarios as **failing tests first**, and when changing runnable behavior drives the change once through the project's `verify` command (capturing screenshots for UI cards). On complex cards, the verifier writes its own probes from the card's claims **before reading the implementer's tests**.
 - Cards name **concrete functions and components**, not vague intentions (e.g., *"call `buildGroups()` from `x.ts`"* instead of *"reuse the grouping logic"*). Past ~1.5x the estimated line budget, the implementer simplifies before delivering.
 
 ### Conclusion-First Delivery Protocol
@@ -124,22 +124,22 @@ Because Paseo finish notifications truncate long outputs, every worker's final r
 | :--- | :--- | :--- |
 | `DONE` | Whole card delivered and ready to judge | Dispatch independent review / probe verification per complexity |
 | `PARTIAL` | Only a slice finished | Return to the **same session** to complete |
-| `NEEDS-INPUT` | Unresolved decision or human-only step | Supply the answer or consolidated human checklist |
-| `STUCK` | 3 distinct approaches failed on the same item | Revise the plan or card (workers never alter acceptance or skip checks) |
+| `NEEDS-INPUT` | Unresolved decision, unlisted existing check failure, or human-only step | Supply the answer, triage pre-existing flake, or send consolidated human checklist |
+| `STUCK` | 3 distinct approaches failed on the same item | Revise the plan or card (workers never alter acceptance, skip checks, or mask failures via sleeps/reruns) |
 
 <details>
 <summary><strong>Expand: 12-Field Task Card Anatomy (from <code>references/card.md</code>)</strong></summary>
 
 1. `[Role]` One-sentence role definition
 2. `[Boundaries]` Repository-only scope, explicit prohibitions, verbatim restricted-machine clause
-3. `[Background]` Exact must-read paths (code map first), base branch & commit, prior decisions
+3. `[Background]` Exact must-read paths (code map first), base branch & commit, prior decisions, known flaky checks
 4. `[Goal]` One sentence describing the done state
-5. `[Scope]` Files/functions/lines to touch, existing helpers/components to call, explicit non-goals
+5. `[Scope]` Files/functions/lines to touch, existing helpers/components to call, authorized existing check changes, explicit non-goals
 6. `[Steps]` Concrete numbered steps
-7. `[Self-check]` Local tests green before pushing; changed tests per step, typecheck/lint/format once at the end
+7. `[Self-check]` Local tests green before pushing; changed tests per step, typecheck/lint/format once at the end, drive runnable changes once through `verify` and capture evidence (full suite left to CI)
 8. `[Acceptance]` Checklist of falsifiable scenarios, each naming its evidence
 9. `[Guard the class]` Required on fix cards: what check or structure prevents this class of defect
-10. `[Stop conditions]` Stop after 3 failed approaches on the same item; never edit acceptance or skip checks
+10. `[Stop conditions]` Stop after 3 failed approaches on the same item; never edit acceptance, skip checks, or pass via sleeps/longer timeouts/reruns; commit & push then report `NEEDS-INPUT` on unlisted unrelated failures
 11. `[Delivery]` Branch & commit convention; conclusion-first reply (`DONE`/`PARTIAL`/`NEEDS-INPUT`/`STUCK`, ~1200 chars cap), full logs in report file
 12. `[Cleanup]` Remove only temp files/dirs created by this session
 
@@ -157,9 +157,9 @@ All review, landing, and ratchet rules are defined in [`references/review.md`](r
 
 ### Rules of Independent Judgment
 
-- **Strictly blind**: Verifier and reviewer use a **different model family** from the implementer, run in a **fresh read-only session**, and are never shown the implementer's self-assessment or `PASS`.
-- **One verdict, one commit**: Review cards name the exact commit hash and verdicts repeat it. Landing merges in a **temporary worktree** off `origin/main` only when branch `HEAD` matches the judged commit hash.
-- **Strict triage & two-round cap**: Only issues hitting `DISPATCH` blocking criteria, violating the card's stated claim/scope, or breaking an existing test/contract — **with a concrete trigger path** — are `Blocking`. Everything else is logged as a `Suggestion` in the tracker and never holds up a merge. Review and probe findings on the same commit feed one fix round, forwarded verbatim; if blocking items remain after round two, escalate to the user with a recommendation.
+- **Strictly blind & base-branch rules**: Verifier and reviewer use a **different model family** from the implementer, run in a **fresh read-only session**, and are never shown the implementer's self-assessment or `PASS`. Reviewers read `lesson.md` from `origin/main` to check diff-triggered items and verify existing check changes stay within the card's `[Scope]` list.
+- **One verdict, one commit, stamped at land**: Review cards name the exact commit hash and verdicts repeat it. Landing merges in a **temporary worktree** off `origin/main` only when branch `HEAD` matches the judged commit hash, routes unreviewed check-file edits/deletions outside `[Scope]` to the standing assistant first, and records a `Verified:` trailer (including `self`) on the merge/squash commit.
+- **Strict triage & two-round convergence**: Only issues hitting `DISPATCH` blocking criteria, violating the card's stated claim/scope (including loosening an unlisted existing check), or breaking an existing test/contract — **with a concrete trigger path** — are `Blocking`. Everything else is logged as a `Suggestion` (or tagged `pre-existing` when reproduced on `origin/main` and filed as a standalone tracker bug) and never holds up a merge. Review and probe findings on the same commit feed one fix round, forwarded verbatim; round two focuses on round-one blocking items and the incremental diff (plus callers); if blocking items remain after round two, escalate to the user with a recommendation.
 
 ### Three-Tier Ratchet (Mistakes Become Checks)
 
@@ -167,9 +167,9 @@ Every user correction and every rejected review item is closed in the same fix c
 
 1. **Mechanically checkable → automated guard**: add a guard test, lint rule, or script assertion whose failure message explains how to fix it. Existing violations go into a **shrink-only allowlist**; new code gets zero tolerance.
 2. **Else structurally preventable → reshape interface or layout**: make the wrong form impossible to write.
-3. **Else record a lesson**: add a line to `lesson.md` plus one sentence in the delivery explaining why no mechanical check was possible. Once guarded by a check, a lesson shrinks to a one-line pointer (or is deleted when fully enforced).
+3. **Else record a lesson**: add a diff-triggered risk class (`<diff trigger> → <check>`) to `lesson.md` plus one sentence in the delivery explaining why no mechanical check was possible. Merge overlapping entries on append; once guarded by a check, a lesson shrinks to a one-line pointer (or is deleted when fully enforced).
 
-Every post-dispatch blocking item also closes its **upstream gap** in [`card.md`](references/card.md) (general), `lesson.md` (project-only), or [`models.md`](references/models.md) (model temperament). When two models miss the same bug, the card was underspecified — fix the card before switching models.
+Every post-dispatch blocking item — and every bug found after landing — also closes its **upstream gap** in [`card.md`](references/card.md) (general), `lesson.md` (project-only), or [`models.md`](references/models.md) (compressed to conclusions + data-point counts on append). When two models miss the same bug, the card was underspecified — fix the card before switching models.
 
 ---
 
@@ -178,7 +178,7 @@ Every post-dispatch blocking item also closes its **upstream gap** in [`card.md`
 When starting on a repository without `DISPATCH.md` / `lesson.md`, or normalizing an existing repo for multi-agent teamwork, the Lead runs **Init** ([`references/init.md`](references/init.md) & [`references/docs.md`](references/docs.md)):
 
 - **Ask, never guess**: Reads the repo, scripts, and CI, then queries the Paseo fleet (`list_hosts`, `list_providers`, `list_models`, `list_profiles`). Everything neither the repo nor Paseo specifies (concurrency limits, machine privacy clauses, remote-host models, ask-first rules) is gathered into **one consolidated confirmation proposal** with explicit recommendations.
-- **New & existing projects**: New projects generate `Entry`, `Spec`, and `Development` from the user's brief and plan `Architecture` as the first complex piece of work. Existing projects keep existing docs in place, map them to roles, fill only missing gaps, flag doc-vs-code discrepancies as open questions, and verify every build/test command in a fresh worktree before recording it.
+- **New & existing projects**: New projects generate `Entry`, `Spec`, and `Development` from the user's brief and plan `Architecture` as the first complex piece of work. Existing projects keep existing docs in place, map them to roles, fill only missing gaps, flag doc-vs-code discrepancies as open questions, and verify build/test commands in a fresh worktree (running the `verify` smoke command twice for consistency) before recording them.
 - **Restrained escalation**: Once running, the lead only interrupts the user for ask-first items, open decisions that change the outcome after checking evidence, or human-only steps (physical device, login, password) — finishing all independent work first and asking once with recommendations and trade-offs.
 
 ### 9 Project Doc Roles (Single Source of Truth)
@@ -190,7 +190,7 @@ Each fact has one home; everything else links to it. A role becomes its own file
 | **Entry** | Project overview, doc index, repo-wide rules, task-card rules | Every agent | `AGENTS.md` |
 | **Spec** | Users, goals, scope & non-goals, key journeys, product acceptance, open questions | Plan, Plan Review | `docs/SPEC.md` |
 | **Architecture** | Code map, module responsibilities, interfaces, data flow, one-way doors & rationale | Plan, card `[Background]` | `docs/ARCHITECTURE.md` |
-| **Development** | Setup, **verified** build/test/lint/format commands, release steps | Card `[Self-check]` | `docs/DEVELOPMENT.md` |
+| **Development** | Setup, **verified** build/test/lint/format commands, runnable `verify` command driving the real entry point, release steps | Card `[Self-check]` | `docs/DEVELOPMENT.md` |
 | **Design** | Visual, interaction, and copy rules (UI projects only) | UI cards, copy adviser | `docs/DESIGN.md` |
 | **Decisions** | User decisions and one-way doors (date, choice, why) | Everyone | `docs/agents/decisions.md` |
 | **Tracker** | Active work, blockers + smallest unblock step, deferred items, carried suggestions, recently done (also handoff notes) | Lead at session start | `docs/agents/handoff.md` |

@@ -62,7 +62,7 @@ Goal: the project has a DISPATCH file and a lesson file the user has confirmed, 
 
 ## 5. Card clauses
 - Branch naming, commit convention, card numbering.
-- Verify commands for self-checks (tests, typecheck, lint, format).
+- Verify commands for self-checks (tests, typecheck, lint, format, and the runnable `verify` command if any).
 - Common card clauses: path of the file appended to every card; point to project docs instead of copying them.
 - Report files: where an agent writes its detailed evidence; reply length cap.
 
@@ -77,7 +77,7 @@ Start it empty; rules the project already documents stay in those docs.
 ```markdown
 # Project lessons
 
-> Only lessons that still hold and belong to this project, grouped by topic, first-seen date in brackets. Model temperament goes to the team-lead skill's models.md. A lesson guarded by a check shrinks to one line naming the check.
+> Only classes of risk that still hold and belong to this project, with a trigger readable from a diff: `<diff trigger> → <check> (<origin>, [YYYY-MM-DD])`. One-off bugs become regression tests, style preferences go to Design or Entry, and model temperament goes to the team-lead skill's models.md. Merge overlapping entries when appending; a lesson guarded by a check shrinks to one line naming the check (delete when fully guarded).
 ```
 
 ## AGENTS.md addition

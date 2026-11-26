@@ -49,7 +49,7 @@ Write it yourself and save it where plans live ([docs § roles](docs.md#roles)).
 The plan, its review and the cards hold to:
 
 - One-way doors are decided for the long run now. Everything else takes the simplest form that meets today's need, with no abstraction for an imagined one.
-- The first card is a tracer bullet: the thinnest end-to-end path that runs. Later cards thicken it instead of re-cutting what works.
+- The first card is a tracer bullet: the thinnest end-to-end path that runs, together with the runnable `verify` command that drives it (where the repo is runnable). Later cards thicken it instead of re-cutting what works.
 - Reuse before writing: existing project code and dependencies, then a mature maintained library, then a pattern proven in established products; new code last.
 - Replaced code is deleted, with no migration, compatibility shim or fallback path, unless DISPATCH records users or data that depend on the old behaviour.
 
