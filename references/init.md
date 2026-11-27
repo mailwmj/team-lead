@@ -15,7 +15,7 @@ Goal: the project has a DISPATCH file and a lesson file the user has confirmed, 
    - A host that is offline or restricted: record it from what the user tells you; do not probe it.
 3. **Draft and confirm** in one message; each item is a proposal with your recommendation, and every unknown is an explicit question:
    - **Ask-first list**, and what never needs asking. Respect git rules the project already states.
-   - **Machines and boundaries**: which host builds, runs devices, does reviews; concurrency limits; privacy or resource limits per machine and the exact clause cards to that machine must carry (ask the user; offer this draft: work only inside the repository; do not inspect the machine's network, files outside the repo or system details; keep machine details out of replies and files; ask when a tool or fact is missing).
+   - **Machines and boundaries**: which host builds, runs devices, does reviews; concurrency limits, and how parallel worktrees isolate ports, databases/data dirs, simulators/devices and shared locks (or which checks serialize); privacy or resource limits per machine and the exact clause cards to that machine must carry (ask the user; offer this draft: work only inside the repository; do not inspect the machine's network, files outside the repo or system details; keep machine details out of replies and files; ask when a tool or fact is missing).
    - **Model routing** by capability: strong models review plans and medium or complex code; fast mid-tier models implement, verify and research. Rows: implementation by kind of work, fallback line, plan reviewer, who reviews whom, fact-checker, independent planner, copy adviser, standing assistant. Start from [models](models.md) temperaments and step 2.
    - **Blocking issues** and **sensitive areas** (where simple cards still get a review and reviews use the highest thinking level).
    - **Compatibility**: users or data that depend on old behaviour. Default none: replaced code is deleted without migration.
@@ -48,7 +48,7 @@ Goal: the project has a DISPATCH file and a lesson file the user has confirmed, 
 - Limits per machine; the clause every card to a restricted machine carries, verbatim.
 
 ## 2. Concurrency and working directories
-- Worktree location and how to create one; max agents at once; what only runs in the main checkout and how it is scheduled.
+- Worktree location and how to create one; max agents at once; how parallel worktrees isolate ports, databases/data dirs, simulators/devices and shared locks (and how shared ones are serialized); what only runs in the main checkout and how it is scheduled.
 
 ## 3. Model routing
 | Kind of work | First choice | Fallback | Thinking (agy: in the model id) |

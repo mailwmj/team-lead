@@ -14,7 +14,7 @@ A card is the whole contract: the agent sees only the card and the worktree. A c
 [Guard the class] Required on fix cards: which check or structure stops this class of mistake; if none is possible, why.
 [Stop conditions] Stop and report after 3 different approaches fail on the same item; never change acceptance criteria, skip checks, or make a failing check pass via sleeps, longer timeouts, retries or reruns (diagnostic reruns to prove a failure is unrelated are fine, never as passing evidence). On an unrelated failing check outside `[Scope]` and not listed as a known flaky check in `[Background]`, commit and push completed work, then stop with NEEDS-INPUT; known flaky checks are reported in `[Delivery]` without blocking.
 [Delivery] Branch name and commit convention; a short conclusion-first last reply (first word, verbatim: DONE, PARTIAL, NEEDS-INPUT or STUCK; then verdict, commit hashes, one line per acceptance or review item, open items; length cap per DISPATCH, else ~1200 chars). Detailed evidence, logs and API lists go to the report file DISPATCH names, its path in the reply; with no report file, after the summary.
-[Cleanup] Delete only the temp files and directories this session created.
+[Cleanup] Stop any background processes this session started and delete only the temp files and directories it created.
 ```
 
 ## Acceptance

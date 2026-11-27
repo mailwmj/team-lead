@@ -51,7 +51,7 @@ Running multiple coding agents ad hoc breaks down in predictable ways: vague spe
 
 1. **The lead writes no application code and trusts only raw evidence.** Strong models focus exclusively on judgment — framing, one-way doors, interfaces, card splits, and acceptance criteria. Faster execution models implement, build, and probe against written cards; a cheaper standing assistant handles doc upkeep and clerical checks.
 2. **Plan before code.** Medium and complex work goes through written planning and a read-only **cross-family Plan Review** before any card is dispatched; architectural direction forks run **Dual Planning** in parallel.
-3. **Physical isolation and blind independent review.** One fresh Paseo session and one git worktree per card; strictly one writer per working directory. Reviewers and probe verifiers use a **different model family**, run in fresh read-only sessions, never see the implementer's self-assessment or `PASS`, and pin every verdict to a single commit hash.
+3. **Physical isolation and blind independent review.** One fresh Paseo session and one git worktree per card; strictly one writer per working directory, with ports, test databases, and devices isolated across parallel runs (or serialized per `DISPATCH`). Reviewers and probe verifiers use a **different model family**, run in fresh read-only sessions, never see the implementer's self-assessment or `PASS`, and pin every verdict to a single commit hash.
 4. **Method separated from project state.** The universal collaboration method stays in this skill repo; each project keeps only its own `DISPATCH.md` config and `lesson.md` pitfalls — portable across projects with zero cross-contamination.
 
 ---
@@ -72,7 +72,7 @@ Every piece of work runs through a **7-step closed loop** (`Frame → Plan → C
 
 > **One-way door**: a choice costly to undo — data models, module boundaries, public interfaces, persistence formats, or a new dependency. On cards with visible UI changes the reviewer checks the screenshots, and the verifier adds a visual check only on Complex cards; non-trivial copy or interaction changes also get post-implementation advice from a copy-strong model.
 >
-> **Scheduling & no-downgrade discipline**: Dispatch follows the **dependency graph**, not milestones (launch any card whose upstream interface is fixed whenever a slot opens; milestones are reporting points, not barriers). Any edit to probe-verified code stays at least as complex as the card that verified it, and no card skips the checks its signals set. Runtime state shared across cards (scroll, focus, navigation) gets a **single owner card**, and later cards touching it are probed merged with the earlier one before landing.
+> **Scheduling & no-downgrade discipline**: Dispatch follows the **dependency graph**, not milestones (launch any card whose upstream interface is fixed whenever a slot opens; milestones are reporting points, not barriers); if a session churns across failed attempts (context rot) or hangs on an unbounded command, archive it and split or tighten the card for a fresh session rather than nudging `continue`. Any edit to probe-verified code stays at least as complex as the card that verified it, and no card skips the checks its signals set. Runtime state shared across cards (scroll, focus, navigation) gets a **single owner card**, and later cards touching it are probed merged with the earlier one before landing.
 
 ### Design Bar
 
@@ -143,7 +143,7 @@ Because Paseo finish notifications truncate long outputs, every worker's final r
 9. `[Guard the class]` Required on fix cards: what check or structure prevents this class of defect
 10. `[Stop conditions]` Stop after 3 failed approaches on the same item; never edit acceptance, skip checks, or pass via sleeps/longer timeouts/reruns; commit & push then report `NEEDS-INPUT` on unlisted unrelated failures
 11. `[Delivery]` Branch & commit convention; conclusion-first reply (`DONE`/`PARTIAL`/`NEEDS-INPUT`/`STUCK`, ~1200 chars cap), full logs in report file
-12. `[Cleanup]` Remove only temp files/dirs created by this session
+12. `[Cleanup]` Stop background processes started by this session and remove only temp files/dirs it created
 
 </details>
 
@@ -179,7 +179,7 @@ Every post-dispatch blocking item — and every bug found after landing — also
 
 When starting on a repository without `DISPATCH.md` / `lesson.md`, or normalizing an existing repo for multi-agent teamwork, the Lead runs **Init** ([`references/init.md`](references/init.md) & [`references/docs.md`](references/docs.md)):
 
-- **Ask, never guess**: Reads the repo, scripts, and CI, then queries the Paseo fleet (`list_hosts`, `list_providers`, `list_models`, `list_profiles`). Everything neither the repo nor Paseo specifies (concurrency limits, machine privacy clauses, remote-host models, ask-first rules) is gathered into **one consolidated confirmation proposal** with explicit recommendations.
+- **Ask, never guess**: Reads the repo, scripts, and CI, then queries the Paseo fleet (`list_hosts`, `list_providers`, `list_models`, `list_profiles`). Everything neither the repo nor Paseo specifies (concurrency limits, parallel port/database isolation, machine privacy clauses, remote-host models, ask-first rules) is gathered into **one consolidated confirmation proposal** with explicit recommendations.
 - **New & existing projects**: New projects generate `Entry`, `Spec`, and `Development` from the user's brief and plan `Architecture` as the first complex piece of work. Existing projects keep existing docs in place, map them to roles, fill only missing gaps, flag doc-vs-code discrepancies as open questions, and verify build/test commands in a fresh worktree (running the `verify` smoke command twice for consistency) before recording them.
 - **Restrained escalation**: Once running, the lead only interrupts the user for ask-first items, open decisions that change the outcome after checking evidence, or human-only steps (physical device, login, password) — finishing all independent work first and asking once with recommendations and trade-offs.
 
@@ -192,7 +192,7 @@ Each fact has one home; everything else links to it. A role becomes its own file
 | **Entry** | Project overview, doc index, repo-wide rules, task-card rules | Every agent | `AGENTS.md` |
 | **Spec** | Users, goals, scope & non-goals, key journeys, product acceptance, open questions | Plan, Plan Review | `docs/SPEC.md` |
 | **Architecture** | Code map, module responsibilities, interfaces, data flow, one-way doors & rationale | Plan, card `[Background]` | `docs/ARCHITECTURE.md` |
-| **Development** | Setup, **verified** build/test/lint/format commands, runnable `verify` command driving the real entry point, release steps | Card `[Self-check]` | `docs/DEVELOPMENT.md` |
+| **Development** | Setup (including per-worktree port/DB/device isolation), **verified** build/test/lint/format commands, runnable `verify` command driving the real entry point, release steps | Card `[Self-check]` | `docs/DEVELOPMENT.md` |
 | **Design** | Visual, interaction, and copy rules (UI projects only) | UI cards, copy adviser | `docs/DESIGN.md` |
 | **Decisions** | User decisions and one-way doors (date, choice, why) | Everyone | `docs/agents/decisions.md` |
 | **Tracker** | Active work, blockers + smallest unblock step, deferred items, carried suggestions, recently done (also handoff notes) | Lead at session start | `docs/agents/handoff.md` |
